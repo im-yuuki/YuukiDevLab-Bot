@@ -1,25 +1,52 @@
 package dev.yuuki.discord.ydl.core;
 
+import dev.yuuki.discord.ydl.core.interfaces.ShutdownTask;
+import dev.yuuki.discord.ydl.core.interfaces.StartupTask;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.ExceptionEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
+import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.Collections;
+
+/**
+ * Base event listener for handling common events and logging debug information.
+ */
 @Service
 public class BaseEventListener extends ListenerAdapter {
 
-	Logger logger = LoggerFactory.getLogger(BaseEventListener.class);
+	private final Logger logger = LoggerFactory.getLogger(BaseEventListener.class);
+	private final ApplicationContext context;
+
+	public BaseEventListener(ApplicationContext context) {
+		this.context = context;
+	}
 
 	@Override
 	public void onReady(@NotNull ReadyEvent event) {
-		logger.info("Connected to Discord Gateway");
+		logger.info("Connected to Discord Gateway as {}", event.getJDA().getSelfUser().getAsTag());
 		super.onReady(event);
+	}
+
+	@Override
+	public void onShutdown(@NotNull ShutdownEvent event) {
+		logger.info("Shutting down");
+		super.onShutdown(event);
+	}
+
+	@Override
+	public void onException(@NotNull ExceptionEvent event) {
+		super.onException(event);
 	}
 
 	@Override

@@ -4,7 +4,10 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 
 import java.util.Collection;
 
-public interface InteractionModule {
+/**
+ * Interface for beans that provide slash command data.
+ */
+public interface SlashCommandRegistry {
 
 	Collection<CommandData> getCommandDataCollection();
 

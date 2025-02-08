@@ -1,34 +1,35 @@
 package dev.yuuki.discord.ydl.modules.serverstats;
 
-import dev.yuuki.discord.ydl.core.interfaces.InteractionModule;
+import dev.yuuki.discord.ydl.core.interfaces.SlashCommandRegistry;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.SlashCommandReference;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
-import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import net.dv8tion.jda.internal.interactions.command.SlashCommandInteractionImpl;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.objenesis.instantiator.sun.SunReflectionFactoryInstantiator;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
 
-@Service("serverStatsListener")
-public class EventListener extends ListenerAdapter implements InteractionModule {
+/**
+ * Event listener for server stats display management.
+ */
+@Service("serverStats")
+public class ServerStats extends ListenerAdapter implements SlashCommandRegistry {
 
-	Logger logger = LoggerFactory.getLogger(EventListener.class);
+	Logger logger = LoggerFactory.getLogger(ServerStats.class);
 
 	@Override
 	public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+		if (event.getCommandString().startsWith("/stats ")) {
 
+		}
 		super.onSlashCommandInteraction(event);
 	}
 

@@ -4,6 +4,8 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -26,21 +28,28 @@ public class AppConfiguration {
 			GatewayIntent.GUILD_VOICE_STATES
 	);
 
-	@Bean("jda")
-	public JDA createJDAClient(Collection<ListenerAdapter> listeners) {
-		String token = System.getenv("DISCORD_TOKEN");
-		if (token == null) {
-			logger.error("DISCORD_TOKEN is not set");
-			throw new IllegalStateException("DISCORD_TOKEN is not set");
-		}
-		JDABuilder builder = JDABuilder.create(token, intents);
-		logger.debug("Adding {} event listeners", listeners.size());
-		listeners.forEach(builder::addEventListeners);
-		return builder.build();
-	}
+	private static final EnumSet<CacheFlag> cacheFlags = EnumSet.of(
+			CacheFlag.ACTIVITY,
+			CacheFlag.CLIENT_STATUS,
+			CacheFlag.MEMBER_OVERRIDES,
+			CacheFlag.ONLINE_STATUS,
+			CacheFlag.VOICE_STATE
+	);
 
-	public void onShutdown() {
-		logger.info("Shutting down");
+	@Bean("jda")
+	public JDA createJDAClient(Collection<ListenerAdapter> listeners) throws InterruptedException {
+		// Get bot token from environment variable
+		String token = System.getenv("DISCORD_TOKEN");
+		if (token == null) throw new IllegalStateException("DISCORD_TOKEN is not set");
+		// Builder
+		JDABuilder builder = JDABuilder.create(token, intents);
+		builder.setAutoReconnect(true);
+		builder.useSharding(0, 1);
+		builder.setMemberCachePolicy(MemberCachePolicy.ALL);
+		builder.disableCache(EnumSet.allOf(CacheFlag.class));
+		builder.enableCache(cacheFlags);
+		listeners.forEach(builder::addEventListeners);
+		return builder.build().awaitReady();
 	}
 
 }

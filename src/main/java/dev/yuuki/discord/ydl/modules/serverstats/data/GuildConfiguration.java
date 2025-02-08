@@ -1,4 +1,4 @@
-package dev.yuuki.discord.ydl.modules.serverstats;
+package dev.yuuki.discord.ydl.modules.serverstats.data;
 
 import java.util.ArrayList;
 
