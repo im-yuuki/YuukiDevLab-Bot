@@ -1,6 +1,7 @@
 package dev.yuuki.discord.ydl.modules.serverstats;
 
 import dev.yuuki.discord.ydl.core.interfaces.SlashCommandRegistry;
+import dev.yuuki.discord.ydl.modules.serverstats.handlers.*;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -10,6 +11,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -27,8 +29,31 @@ public class ServerStats extends ListenerAdapter implements SlashCommandRegistry
 
 	@Override
 	public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-		if (event.getCommandString().startsWith("/stats ")) {
-
+		String[] command = event.getCommandString().split(" ");
+		if (command.length != 2 && command[0].equals("/stats")) {
+			@Nullable AbsCommandHandler handler = null;
+			switch (command[1]) {
+				case "show":
+					handler = new ShowStatsSettings(event);
+					break;
+				case "add":
+					handler = new AddStatsChannel(event);
+					break;
+				case "delete":
+					handler = new DeleteStatsChannel(event);
+					break;
+				case "clear":
+					handler = new ClearStatsSettings(event);
+					break;
+				case "reactivate":
+					handler = new ReactiveStatsChannel(event);
+				default:
+					break;
+			}
+			if (handler != null) {
+				logger.trace("Processing {} command", event.getCommandString());
+				handler.handleCommand();
+			}
 		}
 		super.onSlashCommandInteraction(event);
 	}
