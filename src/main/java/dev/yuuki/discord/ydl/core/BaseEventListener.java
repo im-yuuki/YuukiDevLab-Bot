@@ -1,7 +1,5 @@
 package dev.yuuki.discord.ydl.core;
 
-import dev.yuuki.discord.ydl.core.interfaces.ShutdownTask;
-import dev.yuuki.discord.ydl.core.interfaces.StartupTask;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.ExceptionEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
@@ -15,9 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * Base event listener for handling common events and logging debug information.

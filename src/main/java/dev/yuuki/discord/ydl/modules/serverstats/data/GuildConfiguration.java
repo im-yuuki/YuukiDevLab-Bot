@@ -15,4 +15,8 @@ public class GuildConfiguration {
 		return guildId;
 	}
 
+	public ArrayList<ChannelConfiguration> getChannelConfigurations() {
+		return channelConfigurations;
+	}
+
 }

@@ -1,6 +1,8 @@
 package dev.yuuki.discord.ydl.modules.serverstats;
 
-import dev.yuuki.discord.ydl.core.interfaces.SlashCommandRegistry;
+import dev.yuuki.discord.ydl.core.ISlashCommandRegistry;
+import dev.yuuki.discord.ydl.modules.serverstats.data.IServerStatsDatabase;
+import dev.yuuki.discord.ydl.modules.serverstats.data.InMemoryDatabase;
 import dev.yuuki.discord.ydl.modules.serverstats.handlers.*;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -23,9 +25,10 @@ import java.util.List;
  * Event listener for server stats display management.
  */
 @Service("serverStats")
-public class ServerStats extends ListenerAdapter implements SlashCommandRegistry {
+public class ServerStats extends ListenerAdapter implements ISlashCommandRegistry {
 
 	Logger logger = LoggerFactory.getLogger(ServerStats.class);
+	private final IServerStatsDatabase database = new InMemoryDatabase();
 
 	@Override
 	public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
@@ -34,19 +37,19 @@ public class ServerStats extends ListenerAdapter implements SlashCommandRegistry
 			@Nullable AbsCommandHandler handler = null;
 			switch (command[1]) {
 				case "show":
-					handler = new ShowStatsSettings(event);
+					handler = new ShowStatsSettings(event, database);
 					break;
 				case "add":
-					handler = new AddStatsChannel(event);
+					handler = new AddStatsChannel(event, database);
 					break;
 				case "delete":
-					handler = new DeleteStatsChannel(event);
+					handler = new DeleteStatsChannel(event, database);
 					break;
 				case "clear":
-					handler = new ClearStatsSettings(event);
+					handler = new ClearStatsSettings(event, database);
 					break;
 				case "reactivate":
-					handler = new ReactiveStatsChannel(event);
+					handler = new ReactiveStatsChannel(event, database);
 				default:
 					break;
 			}
